@@ -1,0 +1,2 @@
+help: Clear all DHCP leases
+run: touch /var/log/dhcpd.leases

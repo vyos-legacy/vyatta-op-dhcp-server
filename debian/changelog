@@ -1,0 +1,5 @@
+vyatta-op-dhcp-server (0.1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Marat Nepomnyashy <marat@vyatta.co>  Thu, 27 Dec 2007 18:41:58 -0700
