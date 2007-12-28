@@ -1,2 +1,2 @@
 help: Clear all DHCP leases
-run: touch /var/log/dhcpd.leases
+run: sudo touch /var/log/dhcpd.leases
