@@ -24,3 +24,4 @@ libtool
 /Makefile.in
 /Makefile
 
+/command_proc_show_dhcp_stat
