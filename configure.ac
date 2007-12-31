@@ -17,6 +17,15 @@ AC_PREFIX_DEFAULT([/opt/vyatta])
 
 XSLDIR=/opt/vyatta/share/xsl/
 
+
+AC_PROG_CC
+AM_PROG_AS
+AM_PROG_CC_C_O
+AC_PROG_LIBTOOL
+AC_PROG_LEX
+AC_PROG_YACC
+
+
 AC_ARG_ENABLE([nostrip],
 	AC_HELP_STRING([--enable-nostrip],
 	[include -nostrip option during packaging]),
