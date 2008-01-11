@@ -1,0 +1,2 @@
+help: Show current dhcp statistics
+run: sudo /opt/vyatta/sbin/command_proc_show_dhcp_stat show_dhcp_stats.xsl

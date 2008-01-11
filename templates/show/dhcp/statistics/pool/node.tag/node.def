@@ -1,0 +1,2 @@
+help: Show current dhcp statistics for a specific pool
+run: sudo /opt/vyatta/sbin/command_proc_show_dhcp_stat show_dhcp_stats.xsl "$5"
