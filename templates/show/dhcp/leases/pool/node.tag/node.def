@@ -1,0 +1,2 @@
+help: Show current dhcp leases for a specific pool
+run: sudo /opt/vyatta/sbin/command_proc_show_dhcp_leases show_dhcp_leases.xsl "$5"

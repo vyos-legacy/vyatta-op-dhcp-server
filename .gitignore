@@ -24,4 +24,5 @@ libtool
 /Makefile.in
 /Makefile
 
+/command_proc_show_dhcp_leases
 /command_proc_show_dhcp_stat

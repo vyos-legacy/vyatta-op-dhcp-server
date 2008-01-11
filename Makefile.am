@@ -11,7 +11,17 @@ bin_sudo_users_SCRIPTS =
 xsl_DATA        += src/xsl/show_dhcp_leases.xsl
 xsl_DATA        += src/xsl/show_dhcp_stats.xsl
 
-sbin_PROGRAMS	= command_proc_show_dhcp_stat
+sbin_PROGRAMS	= command_proc_show_dhcp_leases command_proc_show_dhcp_stat
+
+
+command_proc_show_dhcp_leases_SOURCES = src/command_proc_base.hh
+command_proc_show_dhcp_leases_SOURCES += src/command_proc_show_dhcp_leases.cc
+command_proc_show_dhcp_leases_SOURCES += src/command_proc_show_dhcp_leases.hh
+command_proc_show_dhcp_leases_SOURCES += src/rl_str_proc.cc
+command_proc_show_dhcp_leases_SOURCES += src/rl_str_proc.hh
+command_proc_show_dhcp_leases_SOURCES += src/xsl_processor.cc
+command_proc_show_dhcp_leases_SOURCES += src/xsl_processor.hh
+command_proc_show_dhcp_leases_LDADD = -lsablot
 
 
 command_proc_show_dhcp_stat_SOURCES = src/command_proc_base.hh
