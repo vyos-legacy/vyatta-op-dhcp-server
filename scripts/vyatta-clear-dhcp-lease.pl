@@ -7,8 +7,9 @@ use Getopt::Long;
 my $ilfile;
 my $olfile;
 my $lip;
+my $pidf;
 my $init;
-GetOptions("ilfile=s" => \$ilfile, "olfile=s" => \$olfile, "lip=s" => \$lip, "init=s" => \$init);
+GetOptions("ilfile=s" => \$ilfile, "olfile=s" => \$olfile, "lip=s" => \$lip, "pidf=s" => \$pidf, "init=s" => \$init);
 
 my $error = 0;
 
@@ -23,6 +24,9 @@ if (!defined($lip) || length($lip) == 0) {
 	$error = 1;
 	print STDERR "$0 Error:  Arg --lip not specified, ex: --lip=192.168.2.122\n";
 }
+if (!defined($pidf) || length($pidf) == 0) {
+	print STDERR "$0 Warning:  Arg --pidf not specified, ex: --init=/var/run/dhcpd.pid\n";
+}
 if (!defined($init) || length($init) == 0) {
 	print STDERR "$0 Warning:  Arg --init not specified, ex: --init=/opt/vyatta/sbin/dhcpd.init\n";
 }
@@ -30,13 +34,15 @@ if (!defined($init) || length($init) == 0) {
 exit(1) if ($error == 1);
 
 
-if (defined($init) && length($init) > 0) {
-	system("$init stop") or die "$0 Error:  Unable to stop DHCP server daemon:  $!";
+if (defined($pidf) && length($pidf) && defined($init) && length($init) > 0) {
+	if (-f $pidf) {
+		system("$init stop") == 0 or die "$0 Error:  Unable to stop DHCP server daemon:  $!";
+	}
 }
 
 
 local $/=undef;
-open LEASES, $ilfile or die "$0 Error:  Couldn't open file $ilfile:  $!";
+open LEASES, "<$ilfile" or die "$0 Error:  Couldn't open file $ilfile:  $!";
 my $leases = <LEASES>;
 close LEASES;
 
@@ -45,12 +51,12 @@ $leases =~ s/^|\nlease $lip {(.|\n)+?\n}//g;
 
 
 if (defined($init) && length($init) > 0) {
-	system("$init start") or die "$0 Error:  Unable to start DHCP server daemon:  $!";
+	system("$init start") == 0 or die "$0 Error:  Unable to start DHCP server daemon:  $!";
 }
 
 
 if (defined($olfile) && length($olfile) > 0) {
-	open LEASES, $olfile or die "$0 Error:  Couldn't open file $olfile:  $!";
+	open LEASES, ">$olfile" or die "$0 Error:  Couldn't open file $olfile:  $!";
 	select LEASES;
 }
 print $leases;
