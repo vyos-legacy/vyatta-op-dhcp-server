@@ -265,10 +265,13 @@ CommandProcShowDHCPLeases::convert_to_xml(const string &line, const string &pool
   }
 
   if (line.find("client-hostname") != string::npos) {
-    std::string strClientHostname = str_proc.get(1);
-    if (strClientHostname.length() > 0) {
-      strClientHostname = strClientHostname.substr(1, strClientHostname.length() - 3);
-      _xml_frag += "<client_hostname>" + strClientHostname + "</client_hostname>";
+    string::size_type indexQS = line.find_first_of("\"");
+    string::size_type indexQE = line.find_last_of("\"");
+    if (indexQS != string::npos && indexQE != string::npos && indexQS < indexQE) {
+      std::string strClientHostname = line.substr(indexQS + 1, indexQE - indexQS - 1);
+      if (strClientHostname.length() > 0) {
+        _xml_frag += "<client_hostname>" + strClientHostname + "</client_hostname>";
+      }
     }
   }
 
