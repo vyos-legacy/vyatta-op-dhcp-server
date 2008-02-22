@@ -1,2 +1,2 @@
 help: Show current dhcp leases
-run: sudo /opt/vyatta/sbin/command_proc_show_dhcp_leases show_dhcp_leases.xsl
+run: sudo /opt/vyatta/bin/sudo-users/command_proc_show_dhcp_leases show_dhcp_leases.xsl

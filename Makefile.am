@@ -11,7 +11,7 @@ bin_sudo_users_SCRIPTS =
 xsl_DATA        += src/xsl/show_dhcp_leases.xsl
 xsl_DATA        += src/xsl/show_dhcp_stats.xsl
 
-sbin_PROGRAMS	= command_proc_show_dhcp_leases command_proc_show_dhcp_stat
+bin_sudo_users_PROGRAMS	= command_proc_show_dhcp_leases command_proc_show_dhcp_stat
 
 sbin_SCRIPTS    = scripts/vyatta-clear-dhcp-lease.pl
 
