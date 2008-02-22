@@ -50,11 +50,6 @@ close LEASES;
 $leases =~ s/^|\nlease $lip {(.|\n)+?\n}//g;
 
 
-if (defined($init) && length($init) > 0) {
-	system("$init start") == 0 or die "$0 Error:  Unable to start DHCP server daemon:  $!";
-}
-
-
 if (defined($olfile) && length($olfile) > 0) {
 	open LEASES, ">$olfile" or die "$0 Error:  Couldn't open file $olfile:  $!";
 	select LEASES;
@@ -64,3 +59,13 @@ if (defined($olfile) && length($olfile) > 0) {
 	select STDOUT;
 	close LEASES;
 }
+
+
+use VyattaConfig;
+my $vcDHCP = new VyattaConfig();
+if ($vcDHCP->exists('.')) {
+	if (defined($init) && length($init) > 0) {
+		system("$init start") == 0 or die "$0 Error:  Unable to start DHCP server daemon:  $!";
+	}
+}
+
