@@ -1,2 +1,3 @@
 help: Clear all DHCP leases
-run: sudo touch /var/log/dhcpd.leases
+run: sudo /opt/vyatta/sbin/vyatta-clear-dhcp-lease.pl --ilfile=/var/log/dhcpd.leases --olfile=/var/log/dhcpd.leases --lip=all --pidf=/var/run/dhcpd.pid --init=/opt/vyatta/sbin/dhcpd.init
+

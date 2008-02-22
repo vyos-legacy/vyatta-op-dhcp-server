@@ -40,26 +40,30 @@ if (defined($pidf) && length($pidf) && defined($init) && length($init) > 0) {
 	}
 }
 
+if (-e $ilfile) {
+	if ($lip eq 'all') {
+		unlink($ilfile) or die "$0 Error:  Unable to delete $ilfile:  $!";
+	} else {
+		local $/=undef;
+		open LEASES, "<$ilfile" or die "$0 Error:  Couldn't open file $ilfile:  $!";
+		my $leases = <LEASES>;
+		close LEASES;
 
-local $/=undef;
-open LEASES, "<$ilfile" or die "$0 Error:  Couldn't open file $ilfile:  $!";
-my $leases = <LEASES>;
-close LEASES;
+
+		$leases =~ s/^|\nlease $lip {(.|\n)+?\n}//g;
 
 
-$leases =~ s/^|\nlease $lip {(.|\n)+?\n}//g;
-
-
-if (defined($olfile) && length($olfile) > 0) {
-	open LEASES, ">$olfile" or die "$0 Error:  Couldn't open file $olfile:  $!";
-	select LEASES;
+		if (defined($olfile) && length($olfile) > 0) {
+			open LEASES, ">$olfile" or die "$0 Error:  Couldn't open file $olfile:  $!";
+			select LEASES;
+		}
+		print $leases;
+		if (defined($olfile) && length($olfile) > 0) {
+			select STDOUT;
+			close LEASES;
+		}
+	}
 }
-print $leases;
-if (defined($olfile) && length($olfile) > 0) {
-	select STDOUT;
-	close LEASES;
-}
-
 
 use VyattaConfig;
 my $vcDHCP = new VyattaConfig();
