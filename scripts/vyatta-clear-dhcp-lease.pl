@@ -63,8 +63,16 @@ if (defined($olfile) && length($olfile) > 0) {
 
 use VyattaConfig;
 my $vcDHCP = new VyattaConfig();
+$vcDHCP->setLevel('service dhcp-server');
 if ($vcDHCP->exists('.')) {
-	if (defined($init) && length($init) > 0) {
+	my $disabled = 0;
+	my $disabled_val = $vcDHCP->returnValue('disabled');
+	if (defined($disabled_val) && $disabled_val eq 'true') {
+		$disabled = 1;
+		print STDERR "Warning:  DHCP server will be deactivated because 'service dhcp-server disabled' is set to 'true'.\n";
+	}
+
+	if ($disabled == 0 && defined($init) && length($init) > 0) {
 		system("$init start") == 0 or die "$0 Error:  Unable to start DHCP server daemon:  $!";
 	}
 }
