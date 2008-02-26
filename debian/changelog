@@ -1,3 +1,30 @@
+vyatta-op-dhcp-server (0.2) unstable; urgency=low
+
+  vc4.0.0
+  [ Mark O'Brien ]
+
+
+  [ Marat Nepomnyashy ]
+  * Added Perl script 'vyatta-clear-dhcp-lease.pl' whose purpose is to
+    clear out a DHCP lease from dhcpd.leases file and restart the DHCP
+    server.  Part of Bug 2703 fix.
+  * Added appropriate templates and modifications for op command 'clear
+    dhcp lease ip <ip>.  Bug 2703 fix.
+  * Properly screen-scrape the 'client-hostname' textual value from
+    between the first and last quotation marks.  Bug 2861 fix.
+  * Moved execution of 'show dhcp' commands to '/opt/vyatta/bin/sudo-
+    users' so that operator users can execute them.  Bug 2864 fix.
+  * Properly restart the DHCP server after clearing out a lease from the
+    'dhcpd.leases' file only if the DHCP server has been enabled in the
+    configuration.  Bug 2873 fix.
+  * Do not re-activate the DHCP server after clearing a DHCP lease if it
+    has been disabled.  Related to Bug 2599 fix.
+  * Fixed up 'clear dhcp leases'.
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@vyatta.com>  Mon, 25 Feb 2008 17:39:12 -0800
+
 vyatta-op-dhcp-server (0.1) unstable; urgency=low
 
   * Initial Release.
