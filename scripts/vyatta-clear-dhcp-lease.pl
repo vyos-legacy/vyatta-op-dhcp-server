@@ -68,9 +68,9 @@ if (-e $ilfile) {
 use VyattaConfig;
 my $vcDHCP = new VyattaConfig();
 $vcDHCP->setLevel('service dhcp-server');
-if ($vcDHCP->exists('.')) {
+if ($vcDHCP->existsOrig('.')) {
 	my $disabled = 0;
-	my $disabled_val = $vcDHCP->returnValue('disabled');
+	my $disabled_val = $vcDHCP->returnOrigValue('disabled');
 	if (defined($disabled_val) && $disabled_val eq 'true') {
 		$disabled = 1;
 		print STDERR "Warning:  DHCP server will be deactivated because 'service dhcp-server disabled' is set to 'true'.\n";
