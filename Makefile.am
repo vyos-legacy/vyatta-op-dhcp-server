@@ -6,14 +6,12 @@ bin_sudo_usersdir = $(bindir)/sudo-users
 
 xsl_DATA =
 
-bin_sudo_users_SCRIPTS = 
+bin_sudo_users_SCRIPTS = scripts/vyatta-clear-dhcp-lease.pl
 
 xsl_DATA        += src/xsl/show_dhcp_leases.xsl
 xsl_DATA        += src/xsl/show_dhcp_stats.xsl
 
 bin_sudo_users_PROGRAMS	= command_proc_show_dhcp_leases command_proc_show_dhcp_stat
-
-sbin_SCRIPTS    = scripts/vyatta-clear-dhcp-lease.pl
 
 
 command_proc_show_dhcp_leases_SOURCES = src/command_proc_base.hh
