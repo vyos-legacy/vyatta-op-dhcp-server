@@ -6,14 +6,16 @@ Build-Depends: debhelper (>= 5), autotools-dev
 Standards-Version: 3.7.2
 
 Package: vyatta-op-dhcp-server
-Architecture: all
-Depends: bash (>= 3.1),
+Architecture: i386
+Depends: libc6,
  vyatta-op,
- vyatta-cfg-dhcp-server
+ vyatta-bash,
+ perl,
+ vyatta-dhcp3-server (>= 3.0.6.dfsg-1)
 Suggests: util-linux (>= 2.13-5),
  net-tools,
  ethtool,
  ncurses-bin (>= 5.5-5),
  ntpdate
-Description: Vyatta operational commands for DHCP server.
- Vyatta operational commands for DHCP server.
+Description: Vyatta operational commands for DHCP server
+ Vyatta CLI operational commands for the vyatta modifiied DHCP server.
