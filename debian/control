@@ -9,7 +9,7 @@ Package: vyatta-op-dhcp-server
 Architecture: i386
 Depends: libc6,
  vyatta-op,
- vyatta-bash,
+ vyatta-bash | bash (>= 3.1),
  perl,
  vyatta-dhcp3-server (>= 3.0.6.dfsg-1)
 Suggests: util-linux (>= 2.13-5),
