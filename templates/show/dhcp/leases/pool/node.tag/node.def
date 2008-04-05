@@ -1,3 +1,3 @@
-help: Show current dhcp leases for a specific pool
+help: Show current DHCP leases for a specific pool
 run: /opt/vyatta/bin/sudo-users/command_proc_show_dhcp_leases show_dhcp_leases.xsl "$5"
 allowed: ( [ -e /var/log/dhcpd.leases ] && grep '^#shared-network: ' /var/log/dhcpd.leases ) | perl -p -e 's/^#shared-network: $1/$1/' | sort -u
