@@ -280,6 +280,8 @@ CommandProcShowDHCPStat::process_conf()
   std::string pool;
   bool in_config_block = false;
   
+  int subnet_count;
+  int subnet_end;
   char line[256];
   FILE *fd = fopen(file.c_str(), "r");
   if (fd) {
@@ -287,12 +289,20 @@ CommandProcShowDHCPStat::process_conf()
       StrProc proc_str(line, " ");
 
       if (proc_str.get(0) == "shared-network") {
+        subnet_count = 0;
+        subnet_end = 0;
 	in_config_block = true;
         pool = proc_str.get(1);
       }
       
+      if (proc_str.get(0) == "subnet") {
+	  subnet_count++;
+      }
+      
       if (proc_str.get(0) == "}") {
-	in_config_block = false;
+        subnet_end++;
+        if (subnet_end > subnet_count)
+	   in_config_block = false;
       }
       
       if ((in_config_block == true) && (proc_str.get(0) == "range")) {
