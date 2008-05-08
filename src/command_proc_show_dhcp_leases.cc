@@ -231,6 +231,7 @@ void
 CommandProcShowDHCPLeases::convert_to_xml(const string &line, const string &pool)
 {
   StrProc str_proc(line, " ");
+  static int active_lease = 0;
 
   if (line.find("lease") != string::npos) {
     _ip = str_proc.get(1);
@@ -247,7 +248,13 @@ CommandProcShowDHCPLeases::convert_to_xml(const string &line, const string &pool
   }
 
   if (line.find("  binding") != string::npos) {
-    _xml_frag += "<bind_state>" + str_proc.get(2) + " " + "</bind_state>";
+     if (str_proc.get(2) == "active;") {
+         active_lease = 1;
+     }
+     else {
+         active_lease = 0;
+     }
+        _xml_frag += "<bind_state>" + str_proc.get(2) + " " + "</bind_state>";
   }
 
   if (line.find("next binding") != string::npos) {
@@ -285,11 +292,15 @@ CommandProcShowDHCPLeases::convert_to_xml(const string &line, const string &pool
     //printf("before insertion: %s\n", _xml_frag.c_str());
     if (pool.empty() == false) {
       if (pool == _pool) {
-	_coll.insert(pair<string, string>(_ip, _xml_frag));
+         if (active_lease == 1){              
+	     _coll.insert(pair<string, string>(_ip, _xml_frag));
+	    }
       }
     }
     else {
-      _coll.insert(pair<string, string>(_ip, _xml_frag));
+          if (active_lease == 1){
+            _coll.insert(pair<string, string>(_ip, _xml_frag));
+         }
     } 
   } 
   return;
