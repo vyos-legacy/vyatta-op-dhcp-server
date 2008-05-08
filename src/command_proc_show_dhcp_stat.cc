@@ -161,9 +161,15 @@ CommandProcShowDHCPStat::process(const string &cmd, bool debug, string &reason)
 {
   UNUSED(debug);
   StrProc proc_str(cmd, " ");
+  std::string pool;
 
-  _xsl = XSLDIR "/" + proc_str.get(0);
-  std::string pool = proc_str.get(1);
+  if (proc_str.size() == 2) {
+     _xsl = XSLDIR "/" + proc_str.get(0);
+     pool = proc_str.get(1);
+  } 
+  else {
+     _xsl = XSLDIR "/" + proc_str.get(0);
+  }
 
   reason = "";
 
@@ -327,9 +333,9 @@ CommandProcShowDHCPStat::write_xml(const std::string & pool)
   _xml_out = "<opcommand name='dhcpstat'>";
   _xml_out += "<num_requests>" + _dhcp_req + "</num_requests>";
   _xml_out += "<num_responses>" + _dhcp_resp + "</num_responses>";
-  _xml_out += "<format type='row'><row>";
+  _xml_out += "<format type='row'>";
 
-  if (pool.length() > 0) {
+  if (pool.empty() == false) {
       const DHCPStatistics * p_ds = _stats[pool];
       if (p_ds != NULL) write_xml(*p_ds); 
   } else {
@@ -338,13 +344,14 @@ CommandProcShowDHCPStat::write_xml(const std::string & pool)
       if (p_ds != NULL) write_xml(*p_ds); 
     }
   }   
-  _xml_out += "</row></format></opcommand>";
+  _xml_out += "</format></opcommand>";
 }
 void
 CommandProcShowDHCPStat::write_xml(const DHCPStatistics & ds)
 {
   char buf[80];
 
+  _xml_out += "<row>";
   _xml_out += "<pool>" + ds._pool + "</pool>";
 
   sprintf(buf, "%ld", ds.getTotalRange());
@@ -357,5 +364,7 @@ CommandProcShowDHCPStat::write_xml(const DHCPStatistics & ds)
   _xml_out += "<num_avail_addr>" + string(buf) + "</num_avail_addr>";
 
   _xml_out += "<interface>" + ds._interface + "</interface>";
+  _xml_out += "</row>";
+
 }
 
