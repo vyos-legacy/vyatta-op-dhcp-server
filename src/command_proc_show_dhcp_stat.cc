@@ -227,7 +227,7 @@ CommandProcShowDHCPStat::process_lease_file()
   const string file("/var/log/dhcpd.leases");
 
   string ip_addr;
-
+  std::string pool;
   char line[256];
   FILE* fd = fopen(file.c_str(), "r");
   if (fd) {
@@ -237,14 +237,20 @@ CommandProcShowDHCPStat::process_lease_file()
 	ip_addr = proc_str.get(1);
       }
       if (proc_str.get(0) == "#shared-network:") {
-        std::string pool = proc_str.get(1);
-	DHCPStatistics * p_ds = _stats[pool];
-	if (p_ds == NULL) {
+          pool = proc_str.get(1);
+      }
+      if (proc_str.get(0) == "binding") {
+        DHCPStatistics * p_ds = _stats[pool];
+        if (p_ds == NULL) {
           p_ds = new DHCPStatistics();
-	  p_ds->_pool = pool;
-	  _stats[pool] = p_ds;
-	}
-	p_ds->_ips.insert(ip_addr);
+          p_ds->_pool = pool;
+          _stats[pool] = p_ds;
+        }
+         if (proc_str.get(2) == "active;") {
+             p_ds->_ips.insert(ip_addr);
+         } else {
+             p_ds->_ips.erase(ip_addr);
+         }
       }
     }
     fclose(fd);
