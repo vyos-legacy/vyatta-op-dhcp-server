@@ -68,7 +68,7 @@ public:
    *
    **/
   void 
-  convert_to_xml(const std::string &line, const std::string &pool);
+  convert_to_xml(const std::string &line, const std::string &pool, bool active_leases);
 
   /**
    *

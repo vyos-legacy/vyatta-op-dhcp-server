@@ -1,0 +1,2 @@
+help: Show expired DHCP leases
+run: /opt/vyatta/bin/sudo-users/command_proc_show_dhcp_leases show_dhcp_leases_expired.xsl "$4"

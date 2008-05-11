@@ -142,15 +142,27 @@ CommandProcShowDHCPLeases::~CommandProcShowDHCPLeases()
 std::string
 CommandProcShowDHCPLeases::process(const string &cmd, bool debug, string &reason)
 {
+  bool active_leases;
   string pool;
   StrProc proc_str(cmd, " ");
 
-  if (proc_str.size() == 2) {
+  if (proc_str.size() == 3) {
     _xsl = XSLDIR "/" + proc_str.get(0);
     pool = proc_str.get(1);
+    active_leases = false;
+  }
+  else if (proc_str.size() == 2 && proc_str.get(1) == "expired") {
+    _xsl = XSLDIR "/" + proc_str.get(0);
+    active_leases = false;
+  }
+  else if (proc_str.size() == 2) {
+    _xsl = XSLDIR "/" + proc_str.get(0);
+    pool = proc_str.get(1);
+    active_leases = true;
   }
   else {
     _xsl = XSLDIR "/" + proc_str.get(0);
+    active_leases = true;
   }
 
   reason = "";
@@ -171,7 +183,7 @@ CommandProcShowDHCPLeases::process(const string &cmd, bool debug, string &reason
       while(fgets(buf, 2048, f) != NULL) { 
 //	printf("process line: %s\n", buf);
 	string line(buf);
-	convert_to_xml(line, pool);
+	convert_to_xml(line, pool, active_leases);
       } 
       if (pclose(f) != 0) {
 	return string("");
@@ -228,10 +240,11 @@ lease 10.0.0.236 {
 *
 **/
 void 
-CommandProcShowDHCPLeases::convert_to_xml(const string &line, const string &pool)
+CommandProcShowDHCPLeases::convert_to_xml(const string &line, const string &pool, bool active_leases)
 {
   StrProc str_proc(line, " ");
   static int active_lease = 0;
+  static int lease_state_backup = 1;
 
   if (line.find("lease") != string::npos) {
     _ip = str_proc.get(1);
@@ -250,9 +263,14 @@ CommandProcShowDHCPLeases::convert_to_xml(const string &line, const string &pool
   if (line.find("  binding") != string::npos) {
      if (str_proc.get(2) == "active;") {
          active_lease = 1;
+         lease_state_backup = 0;
+     }
+     else if (str_proc.get(2) == "free;") {
+         active_lease = 0;
+         lease_state_backup = 0;
      }
      else {
-         active_lease = 0;
+ 	 lease_state_backup = 1;
      }
         _xml_frag += "<bind_state>" + str_proc.get(2) + " " + "</bind_state>";
   }
@@ -270,7 +288,7 @@ CommandProcShowDHCPLeases::convert_to_xml(const string &line, const string &pool
     //    _xml_frag += "<uid>" + str_proc.get(1).substr(0, str_proc.get(1).length()-1) + "</uid>";
     _xml_frag += "<uid></uid>";
   }
-
+   
   if (line.find("client-hostname") != string::npos) {
     string::size_type indexQS = line.find_first_of("\"");
     string::size_type indexQE = line.find_last_of("\"");
@@ -292,15 +310,31 @@ CommandProcShowDHCPLeases::convert_to_xml(const string &line, const string &pool
     //printf("before insertion: %s\n", _xml_frag.c_str());
     if (pool.empty() == false) {
       if (pool == _pool) {
-         if (active_lease == 1){              
+       if (lease_state_backup == 0) {
+         if (active_leases == true){ 
+             if (active_lease == 1) {             
 	     _coll.insert(pair<string, string>(_ip, _xml_frag));
-	    }
-      }
+            }
+	 } else if (active_leases == false) {
+                   if (active_lease == 0) {
+ 		      _coll.insert(pair<string, string>(_ip, _xml_frag));
+		   }	
+         } 	      
+       } 
+     }
     }
     else {
-          if (active_lease == 1){
-            _coll.insert(pair<string, string>(_ip, _xml_frag));
-         }
+          if (lease_state_backup == 0) {
+           if (active_leases == true){
+             if (active_lease == 1) {
+                 _coll.insert(pair<string, string>(_ip, _xml_frag));
+	     }
+         } else if (active_leases == false) {
+		   if (active_lease == 0) {
+	   		_coll.insert(pair<string, string>(_ip, _xml_frag));
+		   } 
+	}
+      }
     } 
   } 
   return;
