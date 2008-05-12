@@ -40,6 +40,7 @@
 <xsl:text>&newln;</xsl:text>
 <xsl:text>&newln;</xsl:text>
 
+<!-- /* we will no longer be displaying these counts as they present incorrect values, function generating these values has been commented as well
 <xsl:text>Total DHCP requests for all pools:   </xsl:text>
 <xsl:value-of select="num_requests"/>
 <xsl:text>&newln;</xsl:text>
@@ -47,8 +48,9 @@
 <xsl:text>Total DHCP responses for all pools:  </xsl:text>
 <xsl:value-of select="num_responses"/>
 <xsl:text>&newln;</xsl:text>
-
 <xsl:text>&newln;</xsl:text>
+*/ -->
+
 <xsl:text>pool                                    pool size   # leased    # avail</xsl:text>
 <xsl:text>&newln;</xsl:text>
 <xsl:text>----                                    ---------   --------    -------</xsl:text>

@@ -193,9 +193,11 @@ CommandProcShowDHCPStat::process(const string &cmd, bool debug, string &reason)
   if (!process_lease_file()) {
     return string("");
   }
+  /* commenting this function call as the function has been commented and is not being used now
   if (!process_statistics()) {
     return string("");
   }
+  */
   if (!process_conf()) {
     return string("");
   }
@@ -224,11 +226,30 @@ lease 10.0.0.236 {
 bool
 CommandProcShowDHCPStat::process_lease_file()
 {
+  const string file_conf(SYSCONFDIR "/dhcpd.conf");
   const string file("/var/log/dhcpd.leases");
 
   string ip_addr;
   std::string pool;
   char line[256];
+
+  FILE* fconf = fopen(file_conf.c_str(), "r");
+  if (fconf) {
+    while (fgets(line, 255, fconf) != NULL) {
+	StrProc proc_str(line, " ");
+	if (proc_str.get(0) == "shared-network") {
+	    pool = proc_str.get(1);
+	    DHCPStatistics * p_ds = _stats[pool];
+            if (p_ds == NULL) {
+               p_ds = new DHCPStatistics();
+               p_ds->_pool = pool;
+               _stats[pool] = p_ds;
+	    }
+        }  
+     } 
+  }
+  fclose(fconf);
+
   FILE* fd = fopen(file.c_str(), "r");
   if (fd) {
     while (fgets(line, 255, fd) != NULL) {
@@ -241,11 +262,6 @@ CommandProcShowDHCPStat::process_lease_file()
       }
       if (proc_str.get(0) == "binding") {
         DHCPStatistics * p_ds = _stats[pool];
-        if (p_ds == NULL) {
-          p_ds = new DHCPStatistics();
-          p_ds->_pool = pool;
-          _stats[pool] = p_ds;
-        }
          if (proc_str.get(2) == "active;") {
              p_ds->_ips.insert(ip_addr);
          } else {
@@ -261,6 +277,7 @@ CommandProcShowDHCPStat::process_lease_file()
 /**
  *
  **/
+/* commenting this function as its no longer going to be used
 bool
 CommandProcShowDHCPStat::process_statistics()
 {
@@ -281,6 +298,7 @@ CommandProcShowDHCPStat::process_statistics()
   }
   return true;
 }
+*/
 
 /**
  * total addr available, ip subnet, interface
@@ -337,8 +355,8 @@ void
 CommandProcShowDHCPStat::write_xml(const std::string & pool) 
 {
   _xml_out = "<opcommand name='dhcpstat'>";
-  _xml_out += "<num_requests>" + _dhcp_req + "</num_requests>";
-  _xml_out += "<num_responses>" + _dhcp_resp + "</num_responses>";
+  //_xml_out += "<num_requests>" + _dhcp_req + "</num_requests>";
+  //_xml_out += "<num_responses>" + _dhcp_resp + "</num_responses>";
   _xml_out += "<format type='row'>";
 
   if (pool.empty() == false) {
