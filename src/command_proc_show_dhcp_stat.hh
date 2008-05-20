@@ -101,15 +101,15 @@ public:
 
 private:
   bool process_lease_file();
-  bool process_statistics();
+//  bool process_statistics();      // no longer being used
   bool process_conf();
   void write_xml(const std::string & pool);
   void write_xml(const DHCPStatistics & ds);
 
 protected:
   std::string _xml_out;
-  std::string _dhcp_req;
-  std::string _dhcp_resp;
+  std::string _dhcp_req; // no longer used
+  std::string _dhcp_resp; // no longer used
   std::map<std::string, DHCPStatistics*> _stats;
 };
 
