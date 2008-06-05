@@ -326,7 +326,7 @@ CommandProcShowDHCPStat::process_conf()
       }
       
       if (proc_str.get(0) == "subnet") {
-	  subnet_count++;
+	  subnet_count = subnet_count + 2;
       }
       
       if (proc_str.get(0) == "}") {
