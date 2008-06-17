@@ -1,3 +1,42 @@
+vyatta-op-dhcp-server (0.10) unstable; urgency=low
+
+	  3.1.0
+  [ Mark O'Brien ]
+
+
+  [ Mohit Mehta ]
+  * Fix Bug 2428 'show dhcp statistics' fixed to show proper stats with
+    multiple subnets under a shared network name
+
+  [ rbalocca ]
+  * Ignore derived files
+
+  [ Mohit Mehta ]
+  * Fix Bug 3158 Show DHCP statistics shows incorrect information
+  * Fix Bug 2446 Add an output modifier of "expired" to the 'show dhcp
+    leases' command
+  * Fix Bug 2444 - Show dhcp statistics command includes expired leases
+    in # leased value
+  * Fix Bug 3235 - 'show dhcp statistics' does not display information
+    for all shared-network-names
+  * Fix Bug 2445 Expired leases are displayed in the output of 'show
+    dhcp leases'
+
+  [ rbalocca ]
+  * Convert to our method of changelog creation
+
+  [ Mohit Mehta ]
+  * Fix Bug 2428 - DHCP Statistics incorrectly reported when multiple
+    subnets exist in a single shared-network
+  * Fix Bug 3069 Help strings should be standardized
+
+  [ Marat Nepomnyashy ]
+  * Do not use 'sudo' for 'show dhcp' commands.  Bug 2897 fix.
+
+  [ Mark O'Brien ]
+
+ -- Mark O'Brien <mobrien@firebolt.vyatta.com>  Tue, 17 Jun 2008 09:27:03 -0700
+
 vyatta-op-dhcp-server (0.9) unstable; urgency=low
 
   3.0.5
