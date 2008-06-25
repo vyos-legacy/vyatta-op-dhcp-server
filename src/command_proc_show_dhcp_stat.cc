@@ -35,6 +35,7 @@
 #include <list>
 #include <string>
 #include <time.h>
+#include <string.h>
 #include <stdlib.h>
 
 //#include "config.h"
@@ -52,7 +53,7 @@ int main(int argc, char ** argv) {
 	string request;
 	bool debug = false;
 	for (int i = 1; i < argc; ++i) {
-		if (strcmp(argv[i], "--debug") == 0) {
+		if (strcmp((const char *)argv[i], "--debug") == 0) {
 			debug = true;
 		} else {
 			request += string(argv[i]) + string(" ");

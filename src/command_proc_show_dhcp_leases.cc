@@ -26,6 +26,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <string.h>
 
 #include <iostream>
 #include <list>
@@ -50,10 +51,11 @@ int main(int argc, char ** argv) {
 	string request;
 	bool debug = false;
 	for (int i = 1; i < argc; ++i) {
-		if (strcmp(argv[i], "--debug") == 0) {
+		const char *arg = argv[i];
+		if (strcmp(arg, "--debug") == 0) {
 			debug = true;
 		} else {
-			request += string(argv[i]) + string(" ");
+			request += string(arg) + string(" ");
 		}
 	}
 	if (debug) {
