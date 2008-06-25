@@ -171,7 +171,7 @@ CommandProcShowDHCPLeases::process(const string &cmd, bool debug, string &reason
 
   struct stat buf;
   if (stat("/var/run/dhcpd.pid", &buf) != 0) {
-    reason = "dhcp server is not running";
+    reason = "DHCP server is not running";
     return string("");
   }
   
