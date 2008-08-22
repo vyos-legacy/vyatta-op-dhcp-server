@@ -6,7 +6,7 @@ Build-Depends: debhelper (>= 5), autotools-dev
 Standards-Version: 3.7.2
 
 Package: vyatta-op-dhcp-server
-Architecture: i386
+Architecture: any
 Depends: libc6,
  vyatta-op,
  vyatta-bash | bash (>= 3.1),
