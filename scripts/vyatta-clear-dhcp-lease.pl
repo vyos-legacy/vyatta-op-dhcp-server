@@ -65,8 +65,8 @@ if (-e $ilfile) {
 	}
 }
 
-use VyattaConfig;
-my $vcDHCP = new VyattaConfig();
+use Vyatta::Config;
+my $vcDHCP = new Vyatta::Config();
 $vcDHCP->setLevel('service dhcp-server');
 if ($vcDHCP->existsOrig('.')) {
 	my $disabled = 0;
