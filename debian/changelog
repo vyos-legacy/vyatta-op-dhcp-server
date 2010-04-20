@@ -1,3 +1,9 @@
+vyatta-op-dhcp-server (0.13.5) unstable; urgency=low
+
+  * Add op-mode command to re-start DHCPv6 server.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Tue, 20 Apr 2010 15:01:50 -0700
+
 vyatta-op-dhcp-server (0.13.4) unstable; urgency=low
 
   * Add command: "show dhcpv6 server leases"
