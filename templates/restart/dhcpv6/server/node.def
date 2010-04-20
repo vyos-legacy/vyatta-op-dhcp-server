@@ -1,0 +1,7 @@
+help: Re-start the DHCPv6 server, if it is configured
+
+run:
+    sudo /opt/vyatta/sbin/dhcpdv6-config.pl --op_mode
+    if [ $? -eq 0 ]; then
+        sudo /opt/vyatta/sbin/dhcpdv6.init restart
+    fi   
