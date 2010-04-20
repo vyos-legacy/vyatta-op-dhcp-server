@@ -8,6 +8,8 @@ xsl_DATA =
 
 bin_sudo_users_SCRIPTS = scripts/vyatta-clear-dhcp-lease.pl
 
+sbin_SCRIPTS = scripts/dhcpdv6-show-leases.pl
+
 xsl_DATA        += src/xsl/show_dhcp_leases.xsl
 xsl_DATA        += src/xsl/show_dhcp_stats.xsl
 xsl_DATA        += src/xsl/show_dhcp_leases_expired.xsl
