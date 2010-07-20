@@ -1,4 +1,4 @@
-help: Re-start the DHCPv6 server, if it is configured
+help: Restart DHCPv6 server
 
 run:
     sudo /opt/vyatta/sbin/dhcpdv6-config.pl --op_mode
