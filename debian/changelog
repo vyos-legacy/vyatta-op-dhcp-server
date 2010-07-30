@@ -1,3 +1,9 @@
+vyatta-op-dhcp-server (0.13.9) unstable; urgency=low
+
+  * fix incorrect types to work with 64-bit
+
+ -- An-Cheng Huang <ancheng@vyatta.com>  Fri, 30 Jul 2010 12:56:05 -0700
+
 vyatta-op-dhcp-server (0.13.8) unstable; urgency=low
 
   * UNRELEASED
