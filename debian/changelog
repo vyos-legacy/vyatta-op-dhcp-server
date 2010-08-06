@@ -1,3 +1,10 @@
+vyatta-op-dhcp-server (0.13.10) unstable; urgency=low
+
+  * Bugfix 5978: Provide a better error message when leases file doesn't
+    exist.
+
+ -- Bob Gilligan <gilligan@vyatta.com>  Fri, 06 Aug 2010 03:45:04 -0700
+
 vyatta-op-dhcp-server (0.13.9) unstable; urgency=low
 
   * fix incorrect types to work with 64-bit
