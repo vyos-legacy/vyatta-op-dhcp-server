@@ -59,7 +59,7 @@ sub log_msg {
 my @lines=();
 
 if (!open(LEASE_FILE, "<$lease_filename")) {
-    printf("Can't open lease file for reading:  $lease_filename\n");
+    printf("DHCPv6 server is not running");
     exit 1;
 }
 
