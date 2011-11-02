@@ -43,7 +43,7 @@ sub iptoint {
   }
   # Strip leading + sign
   $dec =~ s/^\+//;
-  return $dec;
+  return $dec->bstr();
 }
 
 sub get_active {
