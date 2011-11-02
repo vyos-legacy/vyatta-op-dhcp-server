@@ -3,10 +3,15 @@ opdir		 = $(datadir)/vyatta-op/templates
 xsldir          = @XSLDIR@
 
 bin_sudo_usersdir = $(bindir)/sudo-users
+share_perl5dir   = $(datarootdir)/perl5/Vyatta/
+
 
 xsl_DATA =
 
 bin_sudo_users_SCRIPTS = scripts/vyatta-clear-dhcp-lease.pl
+bin_sudo_users_SCRIPTS += scripts/vyatta-show-dhcp-server.pl
+
+share_perl5_DATA = lib/DHCPServerOpMode.pm
 
 sbin_SCRIPTS = scripts/dhcpdv6-show-leases.pl
 sbin_SCRIPTS += scripts/dhcpdv6-show-status.pl
