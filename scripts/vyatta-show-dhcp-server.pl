@@ -27,9 +27,11 @@ use lib '/opt/vyatta/share/perl5';
 use Vyatta::DHCPServerOpMode;
 use Getopt::Long;
 
-my ($show_stats);
-GetOptions("show-stats!"  => \$show_stats);
+my ($show_stats, $pool);
+GetOptions("show-stats!" => \$show_stats, 
+           "pool=s"      => \$pool);
+
 
 if (defined $show_stats){
-  Vyatta::DHCPServerOpMode::print_stats();
+  Vyatta::DHCPServerOpMode::print_stats($pool);
 }

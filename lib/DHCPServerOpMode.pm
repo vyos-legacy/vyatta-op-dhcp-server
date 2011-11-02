@@ -110,6 +110,7 @@ sub get_pool_size {
 }
 
 sub print_stats {
+  my $pool_filter = $_[0];
   my $pool_sizes = get_pool_size();
   my $active = get_active();
   my $format = "%-39s %-11s %-11s %s\n";
@@ -117,8 +118,13 @@ sub print_stats {
   printf($format, "pool", "pool size", "# leased", "# avail");
   printf($format, "----", "---------", "--------", "-------");
   for my $pool (keys %{$pool_sizes}){
+    if (defined ($pool_filter)) {
+      next if ($pool ne $pool_filter);
+    }
     my $pool_size = $pool_sizes->{$pool};
     my $used = $active->{$pool};
+    $used = 0 if (!defined($used));
+    $pool_size = 0 if (!defined($pool_size));
     my $avail = $pool_size - $used;
     printf($format, $pool, $pool_size, $used, $avail);
   }
