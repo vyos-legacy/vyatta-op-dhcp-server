@@ -1,3 +1,10 @@
+vyatta-op-dhcp-server (0.13.18) unstable; urgency=low
+
+  * Return string representation of the BigInt object instead of the
+    object its self
+
+ -- John Southworth <john.southworth@vyatta.com>  Wed, 02 Nov 2011 12:13:39 -0500
+
 vyatta-op-dhcp-server (0.13.17) unstable; urgency=low
 
   * Allow filtering by pool for new dhcp stats
