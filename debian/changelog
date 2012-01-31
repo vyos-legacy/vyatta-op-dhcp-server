@@ -1,3 +1,9 @@
+vyatta-op-dhcp-server (0.13.19) unstable; urgency=low
+
+  * Add ability to restart ipv4 dhcp server and relay-agent
+
+ -- John Southworth <john.southworth@vyatta.com>  Tue, 31 Jan 2012 10:51:42 -0800
+
 vyatta-op-dhcp-server (0.13.18) unstable; urgency=low
 
   * Return string representation of the BigInt object instead of the
