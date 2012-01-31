@@ -1,0 +1,11 @@
+help: Restart DHCP server
+
+run:
+    if cli-shell-api existsEffective service dhcp-server; then
+        echo -n "Restarting DHCP server..."
+        sudo /opt/vyatta/sbin/dhcpd.init restart
+        if [[ $? -eq 0 ]]; then
+          echo "success!"
+        fi
+    fi   
+
