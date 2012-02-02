@@ -68,8 +68,10 @@ sub get_active {
       } else {
         if ($line =~ /binding state active;/) {
           $active_hash{"$pool"}->{"$ip"} += 1 ;
+          ($pool, $ip) = (undef, undef);
         } elsif ($line =~ /binding state free;/ && !($line =~ /next/)) {
           $active_hash{"$pool"}->{"$ip"} -= 1 ;
+          ($pool, $ip) = (undef, undef);
         }
       }
     }
