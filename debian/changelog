@@ -1,3 +1,9 @@
+vyatta-op-dhcp-server (0.13.20) unstable; urgency=low
+
+  * Fix off by one problem in DHCP server op mode commands
+
+ -- John Southworth <john.southworth@vyatta.com>  Thu, 02 Feb 2012 08:49:02 -0800
+
 vyatta-op-dhcp-server (0.13.19) unstable; urgency=low
 
   * Add ability to restart ipv4 dhcp server and relay-agent
