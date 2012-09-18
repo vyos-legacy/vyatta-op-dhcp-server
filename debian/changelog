@@ -1,3 +1,9 @@
+vyatta-op-dhcp-server (0.13.23) unstable; urgency=low
+
+  * Move dhcpd.leases to /config so it is persistent
+
+ -- James Davidson <james.davidson@vyatta.com>  Mon, 17 Sep 2012 19:05:04 -0700
+
 vyatta-op-dhcp-server (0.13.22) unstable; urgency=low
 
   * new branch
