@@ -1,3 +1,3 @@
 help: Show current DHCP statistics for a specific pool
 run: /opt/vyatta/bin/sudo-users/vyatta-show-dhcp-server.pl --show-stats --pool "$6"
-allowed: ( [ -e /var/log/dhcpd.leases ] && grep '^#shared-network: ' /var/log/dhcpd.leases ) | perl -p -e 's/^#shared-network: $1/$1/' | sort -u
+allowed: ( [ -e /config/dhcpd.leases ] && grep '^#shared-network: ' /config/dhcpd.leases ) | perl -p -e 's/^#shared-network: $1/$1/' | sort -u

@@ -47,7 +47,7 @@ sub iptoint {
 }
 
 sub get_active {
-    open( my $leases, '<', "/var/log/dhcpd.leases" );
+    open( my $leases, '<', "/config/dhcpd.leases" );
     my $pool;
     my $ip;
     my $active = 0;

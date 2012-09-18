@@ -228,7 +228,7 @@ bool
 CommandProcShowDHCPStat::process_lease_file()
 {
   const string file_conf(SYSCONFDIR "/dhcpd.conf");
-  const string file("/var/log/dhcpd.leases");
+  const string file("/config/dhcpd.leases");
 
   string ip_addr;
   std::string pool;

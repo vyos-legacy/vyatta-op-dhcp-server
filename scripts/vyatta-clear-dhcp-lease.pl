@@ -15,10 +15,10 @@ my $error = 0;
 
 if (!defined($ilfile) || length($ilfile) == 0) {
 	$error = 1;
-	print STDERR "$0 Error:  Arg --ilfile not specified, ex: --ilfile=/var/log/dhcpd.leases\n";
+	print STDERR "$0 Error:  Arg --ilfile not specified, ex: --ilfile=/config/dhcpd.leases\n";
 }
 if (!defined($olfile) || length($olfile) == 0) {
-	print STDERR "$0 Warning:  Arg --olfile not specified, ex: --olfile=/var/log/dhcpd.leases\n";
+	print STDERR "$0 Warning:  Arg --olfile not specified, ex: --olfile=/config/dhcpd.leases\n";
 }
 if (!defined($lip) || length($lip) == 0) {
 	$error = 1;

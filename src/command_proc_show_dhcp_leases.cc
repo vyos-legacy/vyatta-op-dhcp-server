@@ -179,7 +179,7 @@ CommandProcShowDHCPLeases::process(const string &cmd, bool debug, string &reason
   //first thing, execute this command;
   if (cmd.empty() == false) {
     //    syslog(LOG_DEBUG | LOG_USER , "********* rl_cmd::execute(): %s\n", cmd.c_str());
-    FILE *f = popen("cat /var/log/dhcpd.leases", "r");
+    FILE *f = popen("cat /config/dhcpd.leases", "r");
     if (f) {
       char buf[2048];
       
