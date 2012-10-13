@@ -1,3 +1,9 @@
+vyatta-op-dhcp-server (0.13.23+pacifica1) unstable; urgency=low
+
+  * new branch
+
+ -- John Southworth <john.southworth@vyatta.com>  Fri, 12 Oct 2012 18:49:02 -0700
+
 vyatta-op-dhcp-server (0.13.23) unstable; urgency=low
 
   * Move dhcpd.leases to /config so it is persistent
