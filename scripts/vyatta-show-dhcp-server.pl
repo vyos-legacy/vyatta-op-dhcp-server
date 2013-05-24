@@ -24,8 +24,16 @@
 #
 
 use lib '/opt/vyatta/share/perl5';
+use Vyatta::Config;
 use Vyatta::DHCPServerOpMode;
 use Getopt::Long;
+
+# Check if DHCP Server is configured
+my $cfg = new Vyatta::Config;
+if (!$cfg->isEffective("service dhcp-server")) {
+    print "DHCP server not configured\n";
+    exit 0;
+}
 
 my ($show_stats, $pool);
 GetOptions("show-stats!" => \$show_stats, 
