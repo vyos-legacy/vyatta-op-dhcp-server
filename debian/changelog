@@ -1,3 +1,9 @@
+vyatta-op-dhcp-server (0.13.25) unstable; urgency=low
+
+  * Check that "dhcp server" is configured before showing stats
+
+ -- James Davidson <james.davidson@vyatta.com>  Fri, 24 May 2013 13:51:29 -0700
+
 vyatta-op-dhcp-server (0.13.24) unstable; urgency=low
 
   * new branch
