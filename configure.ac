@@ -15,9 +15,6 @@ AC_CONFIG_AUX_DIR([config])
 AM_INIT_AUTOMAKE([gnu no-dist-gzip dist-bzip2 subdir-objects])
 AC_PREFIX_DEFAULT([/opt/vyatta])
 
-XSLDIR=/opt/vyatta/share/xsl/
-
-
 AC_PROG_CC
 AC_PROG_CXX
 AM_PROG_AS
@@ -36,7 +33,6 @@ AC_CONFIG_FILES(
 	[Makefile])
 
 AC_SUBST(NOSTRIP)
-AC_SUBST(XSLDIR)
 
 AC_OUTPUT
 
