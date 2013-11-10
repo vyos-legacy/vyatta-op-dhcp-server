@@ -35,11 +35,17 @@ if (!$cfg->isEffective("service dhcp-server")) {
     exit 0;
 }
 
-my ($show_stats, $pool);
+my ($show_stats, $show_leases, $pool, $state);
 GetOptions("show-stats!" => \$show_stats, 
+           "show-leases!" => \$show_leases,
+           "state=s" => \$state,
            "pool=s"      => \$pool);
 
 
 if (defined $show_stats){
   Vyatta::DHCPServerOpMode::print_stats($pool);
+}
+
+if (defined($show_leases)) {
+    Vyatta::DHCPServerOpMode::print_leases($pool, $state);
 }

@@ -16,6 +16,8 @@
 # Portions created by Vyatta are Copyright (C) 2008 Vyatta, Inc.
 # All Rights Reserved.
 #
+# Portions created by SO3 Group are Copyright (C) 2013 SO3 Group
+#
 # Author: John Southworth
 # Date: January 2011
 # Description: Library containing functions for DHCP operational commands
@@ -28,6 +30,7 @@ package Vyatta::DHCPServerOpMode;
 use lib "/opt/vyatta/share/perl5/";
 use strict;
 use Math::BigInt;
+use File::Slurp;
 
 sub iptoint {
   # Based on the perl Net::IP module
@@ -131,6 +134,97 @@ sub print_stats {
     printf($format, $pool, $pool_size, $used, $avail);
   }
   print "\n";
+}
+
+# Read leases file into string
+#
+# If this really causes performance troubles,
+# replace with line- or character-oriented parser
+sub read_lease_file {
+    my $leases_file = read_file('/config/dhcpd.leases');
+    return $leases_file;
+}
+
+# Extract individual leases and return array
+sub get_leases {
+    my $leases_raw = shift;
+    my @leases = $leases_raw =~ /(lease .*? {.*?})/gsx;
+
+   return @leases;
+}
+
+# Parse individual lease, return parameter hash
+sub parse_lease {
+    my $lease = shift;
+    my %lease_hash = ();
+
+    # Get client IP address
+    my ($ip_address) = $lease =~ /lease \s+ ([\d\.]+) \s+ {/sx;
+    die("Malformed lease: missing IP address!") unless defined($ip_address);
+    $lease_hash{"ip_address"} = $ip_address;
+
+    # Get hardware address
+    my ($hardware_address) = $lease =~ /hardware \s+ ethernet \s+ (.*?) \s* ;/sx;
+    die("Malformed lease: missing hardware address!") unless defined($hardware_address);
+    $lease_hash{"hardware_address"} = $hardware_address;
+
+    # Get start time
+    my ($start_time) = $lease =~ /starts \s+ \d \s+ (.*?) \s* ;/sx;
+    die("Malformed lease: missing start time!") unless defined($start_time);
+    $lease_hash{"start_time"} = $start_time;
+
+    # Get end time
+    my ($end_time) = $lease =~ /ends \s+ \d \s+ (.*?) \s* ;/sx;
+    die("Malformed lease: missing end time!") unless defined($end_time);
+    $lease_hash{"end_time"} = $end_time;
+
+    # Get state
+    my ($state) = $lease =~ /binding \s+ state \s+ (.*?) \s* ;/sx;
+    die("Malformed lease: missing state!") unless defined($state);
+    $lease_hash{"state"} = $state;
+
+    # Get pool
+    my ($pool) = $lease =~ /shared-network: \s+ (.*?) \s+/sx;
+    $pool = "" unless defined($pool);
+    $lease_hash{"pool"} = $pool;
+    # Get client name
+    my ($client_name) = $lease =~ /client-hostname \s+ "* (.*?) "* \s* ;/sx;
+    $client_name = "" unless defined($client_name);
+    $lease_hash{"hostname"} = $client_name;
+
+    return %lease_hash;
+}
+
+sub print_leases {
+    my ($pool, $state) = @_;
+
+    # Show active leases by default
+    $state = "active" unless defined($state);
+
+    my @leases = get_leases(read_lease_file());
+
+    printf("\n");
+    printf("IP address       Hardware address   Lease expiration     Pool       Client Name\n");
+    printf("----------       ----------------   ----------------     ----       -----------\n");
+
+    for my $lease (@leases) {
+        my %lease_hash = parse_lease($lease);
+
+        my $skip = 0;
+        if ( (defined($state) && ($lease_hash{"state"} ne $state)) ||
+             (defined($pool) && ($lease_hash{"pool"} ne $pool) ) ) {
+            $skip = 1;
+        }
+
+        if ( !$skip ) {
+            printf( "%-16s %-18s %-20s %-10s %s\n",
+                     $lease_hash{"ip_address"},
+                     $lease_hash{"hardware_address"},
+                     $lease_hash{"end_time"},
+                     $lease_hash{"pool"},
+                     $lease_hash{"hostname"} );
+        }
+    }
 }
 
 return 1;
