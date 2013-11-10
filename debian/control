@@ -2,7 +2,7 @@ Source: vyatta-op-dhcp-server
 Section: contrib/net
 Priority: extra
 Maintainer: Vyatta Package Maintainers <maintainers@vyatta.com>
-Build-Depends: debhelper (>= 5), autotools-dev, libsablot0-dev
+Build-Depends: debhelper (>= 5), autotools-dev
 Standards-Version: 3.7.2
 
 Package: vyatta-op-dhcp-server
@@ -12,7 +12,8 @@ Depends: libc6,
  vyatta-bash | bash (>= 3.1),
  perl,
  ${shlibs:Depends},
- vyatta-dhcp3-server (>= 3.0.6.dfsg-1)
+ vyatta-dhcp3-server (>= 3.0.6.dfsg-1),
+ libfile-slurp-perl
 Suggests: util-linux (>= 2.13-5),
  net-tools,
  ethtool,
