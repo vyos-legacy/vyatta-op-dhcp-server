@@ -37,7 +37,7 @@ use Vyatta::Config;
 
 
 # Globals
-my $lease_filename = "/var/log/dhcpdv6.leases";
+my $lease_filename = "/config/dhcpdv6.leases";
 my $debug_flag = 0;
 
 GetOptions(
