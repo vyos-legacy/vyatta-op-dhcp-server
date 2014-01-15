@@ -1,3 +1,11 @@
+vyatta-op-dhcp-server (0.14.0+vyos1+helium2) unstable; urgency=low
+
+  * Bug #121: fix lease regex so it doesn't catch anything but well-
+    formed leases.
+  * Bug #121: don't require all fields to be present, they may be absent
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 15 Jan 2014 01:47:02 +0100
+
 vyatta-op-dhcp-server (0.14.0+vyos1+helium1) unstable; urgency=low
 
   * New branch
