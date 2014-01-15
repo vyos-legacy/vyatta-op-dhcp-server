@@ -1,3 +1,10 @@
+vyatta-op-dhcp-server (0.14.0+vyos1+helium3) unstable; urgency=low
+
+  * Bug #122: Move DHCPv6 lease file to /config to make it survive image
+    upgrades.
+
+ -- Daniil Baturin <daniil@baturin.org>  Wed, 15 Jan 2014 05:19:37 +0100
+
 vyatta-op-dhcp-server (0.14.0+vyos1+helium2) unstable; urgency=low
 
   * Bug #121: fix lease regex so it doesn't catch anything but well-
