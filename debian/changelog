@@ -1,9 +1,3 @@
-vyatta-op-dhcp-server (0.14.0+vyos1+helium1) unstable; urgency=low
-
-  * New branch
-
- -- Daniil Baturin <daniil@baturin.org>  Wed, 15 Jan 2014 00:54:28 +0100
-
 vyatta-op-dhcp-server (0.14.0+hydrogen3) unstable; urgency=low
 
   * Change architecture from 'any' to 'all', as package now has no
