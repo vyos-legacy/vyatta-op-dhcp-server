@@ -164,8 +164,9 @@ sub parse_lease {
     $lease_hash{"ip_address"} = $ip_address;
 
     # Get hardware address
+    # May be absent in non-active leases
     my ($hardware_address) = $lease =~ /hardware \s+ ethernet \s+ (.*?) \s* ;/sx;
-    die("Malformed lease: missing hardware address!") unless defined($hardware_address);
+    $hardware_address = "" unless defined($hardware_address);
     $lease_hash{"hardware_address"} = $hardware_address;
 
     # Get start time
@@ -174,8 +175,9 @@ sub parse_lease {
     $lease_hash{"start_time"} = $start_time;
 
     # Get end time
+    # May be absent in non-active leases
     my ($end_time) = $lease =~ /ends \s+ \d \s+ (.*?) \s* ;/sx;
-    die("Malformed lease: missing end time!") unless defined($end_time);
+    $end_time = "" unless defined($end_time);
     $lease_hash{"end_time"} = $end_time;
 
     # Get state
@@ -187,6 +189,7 @@ sub parse_lease {
     my ($pool) = $lease =~ /shared-network: \s+ (.*?) \s+/sx;
     $pool = "" unless defined($pool);
     $lease_hash{"pool"} = $pool;
+
     # Get client name
     my ($client_name) = $lease =~ /client-hostname \s+ "* (.*?) "* \s* ;/sx;
     $client_name = "" unless defined($client_name);
