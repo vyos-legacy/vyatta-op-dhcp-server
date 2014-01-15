@@ -148,7 +148,7 @@ sub read_lease_file {
 # Extract individual leases and return array
 sub get_leases {
     my $leases_raw = shift;
-    my @leases = $leases_raw =~ /(lease .*? {.*?})/gsx;
+    my @leases = $leases_raw =~ /(lease \s+ [\d\.]+ \s+ {.*?})/gsx;
 
    return @leases;
 }
