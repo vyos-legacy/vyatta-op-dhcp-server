@@ -1,3 +1,15 @@
+vyatta-op-dhcp-server (0.14.0+hydrogen4) unstable; urgency=low
+
+  * New branch
+  * 0.14.0+vyos1+helium1
+  * Revert "0.14.0+vyos1+helium1"
+  * Revert "New branch"
+  * Bug #121: fix lease regex so it doesn't catch anything but well-
+    formed leases.
+  * Bug #121: don't require all fields to be present, they may be absent
+
+ -- Daniil Baturin <daniil@baturin.org>  Fri, 17 Jan 2014 07:05:58 +0100
+
 vyatta-op-dhcp-server (0.14.0+hydrogen3) unstable; urgency=low
 
   * Change architecture from 'any' to 'all', as package now has no
