@@ -90,49 +90,49 @@ sub get_active {
 }
 
 sub get_pool_size {
-  open( my $conf, '<', "/opt/vyatta/etc/dhcpd.conf" )
-       or die "Can't open dhcpd.conf";
-  my $level = 0;
-  my $shared_net;
-  my %shared_net_hash = ();
-  while (<$conf>){
-    my $line = $_;
-    $level++ if ( $line =~ /{/ );
-    $level-- if ( $line =~ /}/ );
-    if ($line =~ /shared-network\s(.*)\s{/){
-      $shared_net = $1;
-    } elsif ($line =~ /range\s(.*?)\s(.*?);/) {
-      my $start = iptoint($1);
-      my $stop = iptoint($2);
-      $shared_net_hash{"$shared_net"} += ($stop - $start + 1);
-    } 
-  }
-  #sanity check the file
-  if ($level != 0){
-    die "Invalid dhcpd.conf, mismatched braces";
-  }
-  return \%shared_net_hash;
+    open( my $conf, '<', "/opt/vyatta/etc/dhcpd.conf" )
+        or die "Can't open dhcpd.conf";
+    my $level = 0;
+    my $shared_net;
+    my %shared_net_hash = ();
+    while (<$conf>) {
+        my $line = $_;
+        $level++ if ( $line =~ /{/ );
+        $level-- if ( $line =~ /}/ );
+        if ($line =~ /shared-network\s(.*)\s{/) {
+            $shared_net = $1;
+        } elsif ($line =~ /range\s(.*?)\s(.*?);/) {
+            my $start = iptoint($1);
+            my $stop = iptoint($2);
+            $shared_net_hash{"$shared_net"} += ($stop - $start + 1);
+        } 
+    }
+    #sanity check the file
+    if ($level != 0){
+        die "Invalid dhcpd.conf, mismatched braces";
+    }
+    return \%shared_net_hash;
 }
 
 sub print_stats {
-  my $pool_filter = $_[0];
-  my $pool_sizes = get_pool_size();
-  my $active = get_active();
-  my $format = "%-39s %-11s %-11s %s\n";
-  print "\n";
-  printf($format, "pool", "pool size", "# leased", "# avail");
-  printf($format, "----", "---------", "--------", "-------");
-  for my $pool (keys %{$pool_sizes}){
-    if (defined ($pool_filter)) {
-      next if ($pool ne $pool_filter);
+    my $pool_filter = $_[0];
+    my $pool_sizes = get_pool_size();
+    my $active = get_active();
+    my $format = "%-25s %-11s %-11s %s\n";
+    print "\n";
+    printf($format, "Pool", "Pool size", "# Leased", "# Avail");
+    printf($format, "----", "---------", "--------", "-------");
+    for my $pool (keys %{$pool_sizes}) {
+        if (defined ($pool_filter)) {
+            next if ($pool ne $pool_filter);
+        }
+        my $pool_size = $pool_sizes->{$pool};
+        my $used = $active->{$pool};
+        $used = 0 if (!defined($used));
+        $pool_size = 0 if (!defined($pool_size));
+        my $avail = $pool_size - $used;
+        printf($format, $pool, $pool_size, $used, $avail);
     }
-    my $pool_size = $pool_sizes->{$pool};
-    my $used = $active->{$pool};
-    $used = 0 if (!defined($used));
-    $pool_size = 0 if (!defined($pool_size));
-    my $avail = $pool_size - $used;
-    printf($format, $pool, $pool_size, $used, $avail);
-  }
   print "\n";
 }
 
@@ -206,9 +206,11 @@ sub print_leases {
 
     my @leases = get_leases(read_lease_file());
 
+    my $format = "%-16s %-18s %-20s %-25s %s\n";
+
     printf("\n");
-    printf("IP address       Hardware address   Lease expiration     Pool       Client Name\n");
-    printf("----------       ----------------   ----------------     ----       -----------\n");
+    printf($format, "IP address", "Hardware address", "Lease expiration", "Pool", "Client Name");
+    printf($format, "----------", "----------------", "----------------", "----", "-----------");
 
     for my $lease (@leases) {
         my %lease_hash = parse_lease($lease);
@@ -220,12 +222,12 @@ sub print_leases {
         }
 
         if ( !$skip ) {
-            printf( "%-16s %-18s %-20s %-10s %s\n",
-                     $lease_hash{"ip_address"},
-                     $lease_hash{"hardware_address"},
-                     $lease_hash{"end_time"},
-                     $lease_hash{"pool"},
-                     $lease_hash{"hostname"} );
+            printf($format,
+                   $lease_hash{"ip_address"},
+                   $lease_hash{"hardware_address"},
+                   $lease_hash{"end_time"},
+                   $lease_hash{"pool"},
+                   $lease_hash{"hostname"} );
         }
     }
 }
