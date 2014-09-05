@@ -162,32 +162,45 @@ sub parse_lease {
     my $lease = shift;
     my %lease_hash = ();
 
+    # Get state
+    my ($state) = $lease =~ /binding \s+ state \s+ (.*?) \s* ;/sx;
+    die("Malformed lease: missing state!") unless defined($state);
+    $lease_hash{"state"} = $state;
+    
     # Get client IP address
     my ($ip_address) = $lease =~ /lease \s+ ([\d\.]+) \s+ {/sx;
     die("Malformed lease: missing IP address!") unless defined($ip_address);
     $lease_hash{"ip_address"} = $ip_address;
 
     # Get hardware address
-    # May be absent in non-active leases
+    # May be absent in backup and free leases so don't complain in that case
     my ($hardware_address) = $lease =~ /hardware \s+ ethernet \s+ (.*?) \s* ;/sx;
-    $hardware_address = "" unless defined($hardware_address);
+    if ($state !~ /backup|free/) {    
+        die("Malformed lease: missing hardware address!") unless defined($hardware_address);
+    } else {
+        $hardware_address = "" unless defined($hardware_address);
+    }
     $lease_hash{"hardware_address"} = $hardware_address;
 
     # Get start time
+    # May be absent in free leases so don't complain in that case
     my ($start_time) = $lease =~ /starts \s+ \d \s+ (.*?) \s* ;/sx;
-    die("Malformed lease: missing start time!") unless defined($start_time);
+    if ($state ne "free") {
+        die("Malformed lease: missing start time!") unless defined($start_time);
+    } else {
+        $start_time = "" unless defined($start_time);
+    }
     $lease_hash{"start_time"} = $start_time;
 
     # Get end time
-    # May be absent in non-active leases
+    # May be absent in backup and free leases so don't complain in that case
     my ($end_time) = $lease =~ /ends \s+ \d \s+ (.*?) \s* ;/sx;
-    $end_time = "" unless defined($end_time);
+    if ($state !~ /backup|free/) {
+        die("Malformed lease: missing end time!") unless defined($end_time);
+    } else {
+        $end_time = "" unless defined($end_time);
+    }
     $lease_hash{"end_time"} = $end_time;
-
-    # Get state
-    my ($state) = $lease =~ /binding \s+ state \s+ (.*?) \s* ;/sx;
-    die("Malformed lease: missing state!") unless defined($state);
-    $lease_hash{"state"} = $state;
 
     # Get pool
     my ($pool) = $lease =~ /shared-network: \s+ (.*?) \s+/sx;
