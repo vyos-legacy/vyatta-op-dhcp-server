@@ -209,7 +209,12 @@ sub parse_lease {
 
     # Get client name
     my ($client_name) = $lease =~ /client-hostname \s+ "* (.*?) "* \s* ;/sx;
-    $client_name = "" unless defined($client_name);
+    if (defined($client_name)) {
+        my $prefix = $pool."_";
+        $client_name =~ s/$prefix//;
+    } else {
+        $client_name = "";
+    }
     $lease_hash{"hostname"} = $client_name;
 
     return %lease_hash;
