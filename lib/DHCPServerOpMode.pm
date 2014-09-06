@@ -33,20 +33,21 @@ use Math::BigInt;
 use File::Slurp;
 
 sub iptoint {
-  # Based on the perl Net::IP module
-  my $ip = shift;
-  my $binip = unpack('B32', pack('C4C4C4C4', split(/\./, $ip)));
-  # $n is the increment, $dec is the returned value
-  my ($n, $dec) = (Math::BigInt->new(1), Math::BigInt->new(0));
-  # Reverse the bit string
-  foreach (reverse(split '', $binip)) {
-      # If the nth bit is 1, add 2**n to $dec
-      $_ and $dec += $n;
-      $n *= 2;
-  }
-  # Strip leading + sign
-  $dec =~ s/^\+//;
-  return $dec->bstr();
+    # Based on the perl Net::IP module
+    my $ip = shift;
+    my $binip = unpack('B32', pack('C4C4C4C4', split(/\./, $ip)));
+    # $n is the increment, $dec is the returned value
+    my ($n, $dec) = (Math::BigInt->new(1), Math::BigInt->new(0));
+    # Reverse the bit string
+    foreach (reverse(split '', $binip)) {
+        # If the nth bit is 1, add 2**n to $dec
+        $_ and $dec += $n;
+        $n *= 2;
+    }
+    # Strip leading + sign
+    $dec =~ s/^\+//;
+    
+    return $dec->bstr();
 }
 
 sub get_active {
@@ -57,35 +58,36 @@ sub get_active {
     my %active_hash = ();
     my %active_leases = ();
     while (<$leases>){
-      my $line = $_;
-      if ($line =~ /lease\s(.*)\s{/){
-        $ip = $1;
-      }
-      next if (!defined($ip));
-      if ($line =~ /shared-network:\s(.*)/) {
-        $pool = $1;
-      }
-      next if (!defined($pool));
-      if (!defined($active_hash{"$pool"}->{"$ip"})){
-        $active_hash{"$pool"}->{"$ip"} = 0;
-      } else {
-        if ($line =~ /binding state active;/) {
-          $active_hash{"$pool"}->{"$ip"} += 1 ;
-          ($pool, $ip) = (undef, undef);
-        } elsif ($line =~ /binding state free;/ && !($line =~ /next/)) {
-          $active_hash{"$pool"}->{"$ip"} -= 1 ;
-          ($pool, $ip) = (undef, undef);
+        my $line = $_;
+        if ($line =~ /lease\s(.*)\s{/){
+            $ip = $1;
         }
-      }
+        next if (!defined($ip));
+        if ($line =~ /shared-network:\s(.*)/) {
+            $pool = $1;
+        }
+        next if (!defined($pool));
+        if (!defined($active_hash{"$pool"}->{"$ip"})){
+            $active_hash{"$pool"}->{"$ip"} = 0;
+        } else {
+            if ($line =~ /binding state active;/) {
+                $active_hash{"$pool"}->{"$ip"} += 1 ;
+                ($pool, $ip) = (undef, undef);
+            } elsif ($line =~ /binding state free;/ && !($line =~ /next/)) {
+                $active_hash{"$pool"}->{"$ip"} -= 1 ;
+                ($pool, $ip) = (undef, undef);
+            }
+        }
     }
     for my $pool (keys %{active_hash}){
-      for my $ip ( keys %{$active_hash{$pool}}) {
-        if (!defined($active_leases{$pool})){
-          $active_leases{$pool} = 0;
+        for my $ip ( keys %{$active_hash{$pool}}) {
+            if (!defined($active_leases{$pool})){
+                $active_leases{$pool} = 0;
+            }
+            $active_leases{$pool} += 1 if ( $active_hash{"$pool"}->{"$ip"} >= 0 );
         }
-        $active_leases{$pool} += 1 if ( $active_hash{"$pool"}->{"$ip"} >= 0 );
-      }
     }
+    
     return \%active_leases;
 }
 
@@ -111,6 +113,7 @@ sub get_pool_size {
     if ($level != 0){
         die "Invalid dhcpd.conf, mismatched braces";
     }
+    
     return \%shared_net_hash;
 }
 
@@ -133,7 +136,7 @@ sub print_stats {
         my $avail = $pool_size - $used;
         printf($format, $pool, $pool_size, $used, $avail);
     }
-  print "\n";
+    print "\n";
 }
 
 # Read leases file into string
@@ -142,6 +145,7 @@ sub print_stats {
 # replace with line- or character-oriented parser
 sub read_lease_file {
     my $leases_file = read_file('/config/dhcpd.leases');
+
     return $leases_file;
 }
 
@@ -150,7 +154,7 @@ sub get_leases {
     my $leases_raw = shift;
     my @leases = $leases_raw =~ /(lease \s+ [\d\.]+ \s+ {.*?})/gsx;
 
-   return @leases;
+    return @leases;
 }
 
 # Parse individual lease, return parameter hash
@@ -158,32 +162,45 @@ sub parse_lease {
     my $lease = shift;
     my %lease_hash = ();
 
+    # Get state
+    my ($state) = $lease =~ /binding \s+ state \s+ (.*?) \s* ;/sx;
+    die("Malformed lease: missing state!") unless defined($state);
+    $lease_hash{"state"} = $state;
+    
     # Get client IP address
     my ($ip_address) = $lease =~ /lease \s+ ([\d\.]+) \s+ {/sx;
     die("Malformed lease: missing IP address!") unless defined($ip_address);
     $lease_hash{"ip_address"} = $ip_address;
 
     # Get hardware address
-    # May be absent in non-active leases
+    # May be absent in backup and free leases so don't complain in that case
     my ($hardware_address) = $lease =~ /hardware \s+ ethernet \s+ (.*?) \s* ;/sx;
-    $hardware_address = "" unless defined($hardware_address);
+    if ($state !~ /backup|free/) {    
+        die("Malformed lease: missing hardware address!") unless defined($hardware_address);
+    } else {
+        $hardware_address = "" unless defined($hardware_address);
+    }
     $lease_hash{"hardware_address"} = $hardware_address;
 
     # Get start time
+    # May be absent in free leases so don't complain in that case
     my ($start_time) = $lease =~ /starts \s+ \d \s+ (.*?) \s* ;/sx;
-    die("Malformed lease: missing start time!") unless defined($start_time);
+    if ($state ne "free") {
+        die("Malformed lease: missing start time!") unless defined($start_time);
+    } else {
+        $start_time = "" unless defined($start_time);
+    }
     $lease_hash{"start_time"} = $start_time;
 
     # Get end time
-    # May be absent in non-active leases
+    # May be absent in backup and free leases so don't complain in that case
     my ($end_time) = $lease =~ /ends \s+ \d \s+ (.*?) \s* ;/sx;
-    $end_time = "" unless defined($end_time);
+    if ($state !~ /backup|free/) {
+        die("Malformed lease: missing end time!") unless defined($end_time);
+    } else {
+        $end_time = "" unless defined($end_time);
+    }
     $lease_hash{"end_time"} = $end_time;
-
-    # Get state
-    my ($state) = $lease =~ /binding \s+ state \s+ (.*?) \s* ;/sx;
-    die("Malformed lease: missing state!") unless defined($state);
-    $lease_hash{"state"} = $state;
 
     # Get pool
     my ($pool) = $lease =~ /shared-network: \s+ (.*?) \s+/sx;
@@ -192,7 +209,12 @@ sub parse_lease {
 
     # Get client name
     my ($client_name) = $lease =~ /client-hostname \s+ "* (.*?) "* \s* ;/sx;
-    $client_name = "" unless defined($client_name);
+    if (defined($client_name)) {
+        my $prefix = $pool."_";
+        $client_name =~ s/$prefix//;
+    } else {
+        $client_name = "";
+    }
     $lease_hash{"hostname"} = $client_name;
 
     return %lease_hash;
