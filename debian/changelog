@@ -1,3 +1,13 @@
+vyatta-op-dhcp-server (0.14.0+vyos1+helium4) unstable; urgency=low
+
+  [Alex Harpin]
+  * vyatta-op-dhcp-server: tidy up output on "show dhcp server leases"
+  * vyatta-op-dhcp-server: formatting changes for style consistency
+  * vyatta-op-dhcp-server: update dhcp lease parsing logic based on type
+  * vyatta-op-dhcp-server: strip shared-network prefix from client-hostname
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Mon, 1 Dec 2014 07:16:58 +0000
+ 
 vyatta-op-dhcp-server (0.14.0+vyos1+helium3) unstable; urgency=low
 
   * Bug #122: Move DHCPv6 lease file to /config to make it survive image
