@@ -1,7 +1,7 @@
 Source: vyatta-op-dhcp-server
 Section: contrib/net
 Priority: extra
-Maintainer: Vyatta Package Maintainers <maintainers@vyos.net>
+Maintainer: VyOS Package Maintainers <maintainers@vyos.net>
 Build-Depends: debhelper (>= 5), autotools-dev
 Standards-Version: 3.7.2
 
@@ -19,5 +19,5 @@ Suggests: util-linux (>= 2.13-5),
  ethtool,
  ncurses-bin (>= 5.5-5),
  ntpdate
-Description: Vyatta operational commands for DHCP server
- Vyatta CLI operational commands for the vyatta modifiied DHCP server.
+Description: VyOS operational commands for DHCP server
+ VyOS CLI operational commands for the vyatta modified DHCP server.
