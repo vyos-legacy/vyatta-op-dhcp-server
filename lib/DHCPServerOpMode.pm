@@ -175,7 +175,7 @@ sub parse_lease {
     # Get hardware address
     # May be absent in backup and free leases so don't complain in that case
     my ($hardware_address) = $lease =~ /hardware \s+ ethernet \s+ (.*?) \s* ;/sx;
-    if ($state !~ /backup|free/) {    
+    if ($state !~ /backup|free|abandoned/) {    
         die("Malformed lease: missing hardware address!") unless defined($hardware_address);
     } else {
         $hardware_address = "" unless defined($hardware_address);
