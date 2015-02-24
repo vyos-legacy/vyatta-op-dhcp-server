@@ -1,3 +1,10 @@
+vyatta-op-dhcp-server (0.14.0+vyos1+helium5) unstable; urgency=low
+
+  [Alex Harpin]
+  * vyatta-op-dhcp-server: "Malformed lease" with an abandoned DHCP lease
+
+ -- Alex Harpin <development@landsofshadow.co.uk>  Tue, 24 Feb 2015 22:57:41 +0000
+ 
 vyatta-op-dhcp-server (0.14.0+vyos1+helium4) unstable; urgency=low
 
   [Alex Harpin]
