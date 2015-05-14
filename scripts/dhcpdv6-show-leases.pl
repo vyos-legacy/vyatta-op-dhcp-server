@@ -70,6 +70,7 @@ chomp @lines;
 my $level = 0;
 my $s1;
 my $s2;
+my $shared_network;
 my $ia_na;
 my $iaaddr;
 my $ends_day;
@@ -80,13 +81,13 @@ my %ghash = ();
 # Parse the leases file into a hash keyed by IPv6 addr.
 foreach my $line (@lines) {
     log_msg("Line: $line\n");
-    if ($line =~ /^ia-na .*\{/) {
+    if ($line =~ /^ia-na "(.*)" \{/) {
 	if ($level != 0) {
 	    printf("Found ia-na at level $level\n");
 	    exit 1;
 	}
 	log_msg("setting ia_na\n");
-	($s1, $ia_na, $s2) = split(' ', $line);
+	$ia_na = $1;
 	$level++;
     } elsif ($line =~ /^.*iaaddr .*\{/) {
 	if ($level != 1) {
@@ -113,6 +114,9 @@ foreach my $line (@lines) {
 	log_msg("Setting binding state\n");
 	($s1, $s2, $binding_state) = split(' ', $line);
 	$binding_state =~ s/;//;
+    } elsif ($line =~ /^#shared-network: .*/) {
+        log_msg("Setting shared network\n");
+        ($s1, $shared_network) = split(' ', $line);
     } elsif ($line =~ /^.*\{/) {
 	log_msg("Unknown clause: $line\n");
 	$level++;
@@ -140,12 +144,13 @@ foreach my $line (@lines) {
 	    }
 
 	    log_msg("Setting ghash entry for $iaaddr to $ends_day $ends_time\n");
-	    my @array = ($ends_day, $ends_time, $binding_state);
+	    my @array = ($ia_na, $ends_day, $ends_time, $binding_state, $shared_network);
 	    $ghash{$iaaddr} = \@array;
 	    undef $ia_na;
 	    undef $iaaddr;
 	    undef $ends_day;
 	    undef $ends_time;
+	    undef $shared_network;
 	}
     }
 }
@@ -163,10 +168,13 @@ if ($num_entries == 0) {
 }
 
 printf("\n");
-printf("IPv6 Address                            Expiration          State\n");
-printf("--------------------------------------- ------------------- ------\n");
+printf("IPv6 Address                            IAID        DUID                                                        Expiration          State     Pool\n");
+printf("--------------------------------------- ----------- ----------------------------------------------------------- ------------------- --------- ----\n");
 foreach my $key (keys %ghash) {
     my $entry = $ghash{$key};
-    my ($day, $time, $state) = @$entry;
-    printf ("%-39s %s %s %s\n", $key, $day, $time, $state);
+    my ($ia_na, $day, $time, $state, $shared_network) = @$entry;
+    $ia_na =~ s/\\(\d{3})/"qq|\\$1|"/gee;
+    my $iaid = join(':', unpack("H*", substr($ia_na, 0, 4)) =~ m/../g);
+    my $duid = join(':', unpack("H*", substr($ia_na, 4)) =~ m/../g);
+    printf ("%-39s %s %-59s %s %s %-9s %s\n", $key, $iaid, $duid, $day, $time, $state, $shared_network);
 }
