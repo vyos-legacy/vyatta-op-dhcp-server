@@ -12,7 +12,7 @@ Depends: libc6,
  vyatta-bash | bash (>= 3.1),
  perl,
  ${shlibs:Depends},
- vyatta-dhcp3-server (>= 3.0.6.dfsg-1),
+ isc-dhcp-server,
  libfile-slurp-perl
 Suggests: util-linux (>= 2.13-5),
  net-tools,
