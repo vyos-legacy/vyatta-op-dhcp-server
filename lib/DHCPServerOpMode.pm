@@ -73,7 +73,7 @@ sub get_active {
             if ($line =~ /binding state active;/) {
                 $active_hash{"$pool"}->{"$ip"} += 1 ;
                 ($pool, $ip) = (undef, undef);
-            } elsif ($line =~ /binding state free;/ && !($line =~ /next/)) {
+            } elsif ($line =~ /binding state free|backup;/ && !($line =~ /next/)) {
                 $active_hash{"$pool"}->{"$ip"} -= 1 ;
                 ($pool, $ip) = (undef, undef);
             }
@@ -184,25 +184,25 @@ sub parse_lease {
 
     # Get start time
     # May be absent in free leases so don't complain in that case
-    my ($start_time) = $lease =~ /starts \s+ \d \s+ (.*?) \s* ;/sx;
-    if ($state ne "free") {
-        die("Malformed lease: missing start time!") unless defined($start_time);
-    } else {
-        $start_time = "" unless defined($start_time);
+    my ($start_time) = $lease =~ /starts \s+ \d \s+ (.*?) \s* ;/sx; 
+    if ($state !~ /free/) {
+        die("Malformed lease: missing start time!") unless defined($start_time) or ($state =~ /backup/);	# By migrating into fail-over an old lease had no start/end date in state backup. dirty hack.
+    } else { 
+        $start_time = "" unless defined($start_time); 
     }
-    $lease_hash{"start_time"} = $start_time;
-
+    $lease_hash{"start_time"} = $start_time;  
+	 
     # Get end time
     # May be absent in backup and free leases so don't complain in that case
     my ($end_time) = $lease =~ /ends \s+ \d \s+ (.*?) \s* ;/sx;
     if ($state !~ /backup|free/) {
         die("Malformed lease: missing end time!") unless defined($end_time);
     } else {
-        $end_time = "" unless defined($end_time);
+        $end_time = "" unless defined($end_time); 
     }
     $lease_hash{"end_time"} = $end_time;
 
-    # Get pool
+    # Get pool 
     my ($pool) = $lease =~ /shared-network: \s+ (.*?) \s+/sx;
     $pool = "" unless defined($pool);
     $lease_hash{"pool"} = $pool;
@@ -222,28 +222,35 @@ sub parse_lease {
 
 sub print_leases {
     my ($pool, $state) = @_;
-
+	
     # Show active leases by default
     $state = "active" unless defined($state);
 
-    my @leases = get_leases(read_lease_file());
-
+    my @leases = reverse(get_leases(read_lease_file()));
+	my %printed_leases_hash;
+	
     my $format = "%-16s %-18s %-20s %-25s %s\n";
 
     printf("\n");
     printf($format, "IP address", "Hardware address", "Lease expiration", "Pool", "Client Name");
     printf($format, "----------", "----------------", "----------------", "----", "-----------");
-
+	
+	
     for my $lease (@leases) {
         my %lease_hash = parse_lease($lease);
 
         my $skip = 0;
+		
         if ( (defined($state) && ($lease_hash{"state"} ne $state)) ||
-             (defined($pool) && ($lease_hash{"pool"} ne $pool) ) ) {
+             (defined($pool) && ($lease_hash{"pool"} ne $pool) )){	
             $skip = 1;
-        }
-
-        if ( !$skip ) {
+        } elsif ( exists $printed_leases_hash{$lease_hash{"pool"}, $lease_hash{"hardware_address"}, $lease_hash{"ip_address"}} ) {
+			$skip = 1;
+		} else {
+			$printed_leases_hash{$lease_hash{"pool"}, $lease_hash{"hardware_address"}, $lease_hash{"ip_address"}} = 1;
+		}
+        
+		if ( !$skip ) {
             printf($format,
                    $lease_hash{"ip_address"},
                    $lease_hash{"hardware_address"},
