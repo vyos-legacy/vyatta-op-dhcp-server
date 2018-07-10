@@ -71,8 +71,6 @@ sub get_active {
 		$a =~ s/[\";]+//g;
 		$pool = $a
 	}
-	
-	# set shared-networkname = "TEST";
         next if (!defined($pool));
         if (!defined($active_hash{"$pool"}->{"$ip"})){
             $active_hash{"$pool"}->{"$ip"} = 0;
@@ -210,7 +208,11 @@ sub parse_lease {
     $lease_hash{"end_time"} = $end_time;
 
     # Get pool 
-    my ($pool) = $lease =~ /shared-network: \s+ (.*?) \s+/sx;
+    #my ($pool) = $lease =~ /shared-network: \s+ (.*?) \s+/sx;
+    # T726
+    my ($pool) = $lease =~ /set shared-networkname =\s(.*)/;
+    $pool =~ s/[\";]+//g;
+    
     $pool = "" unless defined($pool);
     $lease_hash{"pool"} = $pool;
 
