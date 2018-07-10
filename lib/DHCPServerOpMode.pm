@@ -63,9 +63,16 @@ sub get_active {
             $ip = $1;
         }
         next if (!defined($ip));
-        if ($line =~ /shared-network:\s(.*)/) {
-            $pool = $1;
-        }
+        #if ($line =~ /shared-network:\s(.*)/) {
+        #    $pool = $1;
+        #}
+	if ($line =~ /set shared-networkname =\s(.*)/) {
+		my $a = $1;
+		$a =~ s/[\";]+//g;
+		$pool = $a
+	}
+	
+	# set shared-networkname = "TEST";
         next if (!defined($pool));
         if (!defined($active_hash{"$pool"}->{"$ip"})){
             $active_hash{"$pool"}->{"$ip"} = 0;
