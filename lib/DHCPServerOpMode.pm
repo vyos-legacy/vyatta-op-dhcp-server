@@ -46,7 +46,7 @@ sub iptoint {
     }
     # Strip leading + sign
     $dec =~ s/^\+//;
-    
+
     return $dec->bstr();
 }
 
@@ -67,7 +67,7 @@ sub get_active {
           my $a = $1;
           $a =~ s/[\";]+//g;
           $pool = $a
-	}
+        }
         next if (!defined($pool));
         if (!defined($active_hash{"$pool"}->{"$ip"})){
             $active_hash{"$pool"}->{"$ip"} = 0;
@@ -89,7 +89,7 @@ sub get_active {
             $active_leases{$pool} += 1 if ( $active_hash{"$pool"}->{"$ip"} >= 0 );
         }
     }
-    
+
     return \%active_leases;
 }
 
@@ -109,13 +109,13 @@ sub get_pool_size {
             my $start = iptoint($1);
             my $stop = iptoint($2);
             $shared_net_hash{"$shared_net"} += ($stop - $start + 1);
-        } 
+        }
     }
     #sanity check the file
     if ($level != 0){
         die "Invalid dhcpd.conf, mismatched braces";
     }
-    
+
     return \%shared_net_hash;
 }
 
@@ -168,7 +168,7 @@ sub parse_lease {
     my ($state) = $lease =~ /binding \s+ state \s+ (.*?) \s* ;/sx;
     die("Malformed lease: missing state!") unless defined($state);
     $lease_hash{"state"} = $state;
-    
+
     # Get client IP address
     my ($ip_address) = $lease =~ /lease \s+ ([\d\.]+) \s+ {/sx;
     die("Malformed lease: missing IP address!") unless defined($ip_address);
@@ -177,7 +177,7 @@ sub parse_lease {
     # Get hardware address
     # May be absent in backup and free leases so don't complain in that case
     my ($hardware_address) = $lease =~ /hardware \s+ ethernet \s+ (.*?) \s* ;/sx;
-    if ($state !~ /backup|free|abandoned/) {    
+    if ($state !~ /backup|free|abandoned/) {
         die("Malformed lease: missing hardware address!") unless defined($hardware_address);
     } else {
         $hardware_address = "" unless defined($hardware_address);
@@ -186,21 +186,21 @@ sub parse_lease {
 
     # Get start time
     # May be absent in free leases so don't complain in that case
-    my ($start_time) = $lease =~ /starts \s+ \d \s+ (.*?) \s* ;/sx; 
+    my ($start_time) = $lease =~ /starts \s+ \d \s+ (.*?) \s* ;/sx;
     if ($state !~ /free/) {
         die("Malformed lease: missing start time!") unless defined($start_time) or ($state =~ /backup/);	# By migrating into fail-over an old lease had no start/end date in state backup. dirty hack.
-    } else { 
-        $start_time = "" unless defined($start_time); 
+    } else {
+        $start_time = "" unless defined($start_time);
     }
-    $lease_hash{"start_time"} = $start_time;  
-	 
+    $lease_hash{"start_time"} = $start_time;
+
     # Get end time
     # May be absent in backup and free leases so don't complain in that case
     my ($end_time) = $lease =~ /ends \s+ \d \s+ (.*?) \s* ;/sx;
     if ($state !~ /backup|free/) {
         die("Malformed lease: missing end time!") unless defined($end_time);
     } else {
-        $end_time = "" unless defined($end_time); 
+        $end_time = "" unless defined($end_time);
     }
     $lease_hash{"end_time"} = $end_time;
 
@@ -224,35 +224,34 @@ sub parse_lease {
 
 sub print_leases {
     my ($pool, $state) = @_;
-	
+
     # Show active leases by default
     $state = "active" unless defined($state);
 
     my @leases = reverse(get_leases(read_lease_file()));
-	my %printed_leases_hash;
-	
+    my %printed_leases_hash;
+
     my $format = "%-16s %-18s %-20s %-25s %s\n";
 
     printf("\n");
     printf($format, "IP address", "Hardware address", "Lease expiration", "Pool", "Client Name");
     printf($format, "----------", "----------------", "----------------", "----", "-----------");
-	
-	
+
     for my $lease (@leases) {
         my %lease_hash = parse_lease($lease);
 
         my $skip = 0;
-		
+
         if ( (defined($state) && ($lease_hash{"state"} ne $state)) ||
-             (defined($pool) && ($lease_hash{"pool"} ne $pool) )){	
+             (defined($pool) && ($lease_hash{"pool"} ne $pool) )){
             $skip = 1;
         } elsif ( exists $printed_leases_hash{$lease_hash{"pool"}, $lease_hash{"hardware_address"}, $lease_hash{"ip_address"}} ) {
-			$skip = 1;
-		} else {
-			$printed_leases_hash{$lease_hash{"pool"}, $lease_hash{"hardware_address"}, $lease_hash{"ip_address"}} = 1;
-		}
-        
-		if ( !$skip ) {
+            $skip = 1;
+        } else {
+            $printed_leases_hash{$lease_hash{"pool"}, $lease_hash{"hardware_address"}, $lease_hash{"ip_address"}} = 1;
+        }
+
+        if ( !$skip ) {
             printf($format,
                    $lease_hash{"ip_address"},
                    $lease_hash{"hardware_address"},
