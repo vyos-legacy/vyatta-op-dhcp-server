@@ -51,7 +51,7 @@ if ($exists) {
     printf("DHCPv6 Server is not configured ");
 }
 
-my $ps_output=`ps -C dhcpd3 -o args --no-headers`;
+my $ps_output=`ps -C dhcpd -o args --no-headers`;
 
 my $running_count=0;
 
