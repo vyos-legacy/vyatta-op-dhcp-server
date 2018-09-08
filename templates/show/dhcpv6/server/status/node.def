@@ -1,3 +1,0 @@
-help: Show DHCPv6 Server Status
-
-run: sudo /opt/vyatta/sbin/dhcpdv6-show-status.pl

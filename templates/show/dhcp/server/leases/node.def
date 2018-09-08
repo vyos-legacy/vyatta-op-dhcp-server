@@ -1,2 +1,0 @@
-help: Show current DHCP leases
-run: ${vyatta_bindir}/sudo-users/vyatta-show-dhcp-server.pl --show-leases

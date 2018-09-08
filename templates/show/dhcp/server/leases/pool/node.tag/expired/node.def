@@ -1,2 +1,0 @@
-help: Show expired DHCP leases for a specific pool
-run: ${vyatta_bindir}/sudo-users/vyatta-show-dhcp-server.pl --show-leases --pool=$6 --state=$7

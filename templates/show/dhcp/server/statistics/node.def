@@ -1,2 +1,0 @@
-help: Show current DHCP statistics
-run: ${vyatta_bindir}/sudo-users/vyatta-show-dhcp-server.pl --show-stats
